@@ -1,39 +1,33 @@
-const express = require('express');
-const mongoose = require('mongoose');
+import express from 'express'
+import mongoose from 'mongoose'
+import bd from 'body-parser'
+import cors from 'cors'
+import userRouter from './routes/users'
+//const {APP_DB, PORT} = require('./config/index')
 
-const {createServer} = require('http');
-const { send } = require('process');
+import {createServer} from 'http'
+
+
+const PORT = 3000
+
+//const { send } = require('process');
 const app = express();
-const port = 3000;
+
+app.use(bd.json());
+app.use(cors());
+app.use(userRouter);
 
 mongoose.connect('mongodb+srv://admin:admin@cluster0-trptm.mongodb.net/coursework?retryWrites=true&w=majority', {
-    useNewUrlParser: true
-})//выносится в отдельный файл
+    useNewUrlParser: true,
+   useUnifiedTopology: true
+})
 .then(() => console.log('Mongo connect'))
 .catch((err) => console.log(err))
 
-const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        require: true
-    },
-    email: {
-        type: String,
-        require: true
-    }
-})
+/*if(process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'))
+}*/
 
-const Users = mongoose.model('Users', UserSchema)
-
-app.get('/', (req, res) => {
-    /*Users.create({
-        name: 'Alesia',
-        email: 'liz@qq.ro'
-    })*/
-    Users.find()
-    .then(user => res.send(user))
-    .catch(err => res.send(err))
-})
 
 const server = createServer(app);
-server.listen(port, () => console.log(`server is up port ${port}`));
+server.listen(PORT, () => console.log(`server is up port ${PORT}`));
