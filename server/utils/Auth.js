@@ -1,8 +1,9 @@
 import Users from '../models/Users'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import SECRET from '../constant/secret'
+import passport from 'passport'
 
-const SECRET = 'wertyuio';
 
 export const UserRegister =  async (UserDets, role, res) => {
     const password = await bcrypt.hash(UserDets.password, 12)
@@ -63,14 +64,14 @@ export const UserLogin = async (userData, role, res) => {
             username: user.username,
         },
         SECRET,
-        {expiresIn: '3 days'}
+        {expiresIn: "7 days"}
         )
 
         let result = {
             username: user.username,
             email: user.email,
             role: user.role,
-            token,
+            token: `Bearer ${token}`,
             expiresIn: 168
         };
 
@@ -99,3 +100,5 @@ const ValidateEmail = async email => {
     let user = await Users.findOne({ email })
     return user ? false : true
 }
+
+export const UserAuth = passport.authenticate('jwt', { session: false })

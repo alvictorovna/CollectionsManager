@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 import bd from 'body-parser'
 import cors from 'cors'
 import userRouter from './routes/users'
+import passport from 'passport'
+//import {passportMiddlewares} from './middlewares/passport';
 //const {APP_DB, PORT} = require('./config/index')
 
 import {createServer} from 'http'
@@ -16,6 +18,10 @@ const app = express();
 app.use(bd.json());
 app.use(cors());
 app.use(userRouter);
+app.use(passport.initialize());
+
+require('./middlewares/passport')(passport)
+
 
 mongoose.connect('mongodb+srv://admin:admin@cluster0-trptm.mongodb.net/coursework?retryWrites=true&w=majority', {
     useNewUrlParser: true,
